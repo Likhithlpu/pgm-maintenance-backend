@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const db = require('./db');
 
+
 // Define a route to store complaints in the database
 router.post('/complaints', async (req, res) => {
   const { name, contactNumber, complaint } = req.body;
@@ -29,13 +30,12 @@ router.get('/status', async (req, res) => {
 
   try {
     // Replace this query with your actual query to retrieve the status based on the provided nodeid
-    const query = `
-      SELECT
-        COALESCE(t1.node_id, $1) AS nodeid,
+    const query = `SELECT
+        COALESCE(t1.node_id, '${nodeid}') AS nodeid,
         COALESCE(t1.status, 'Active') AS status,
         t2.timestamp
       FROM
-        (SELECT $1 AS node_id) AS query_nodeid 
+        (SELECT '${nodeid}' AS node_id) AS query_nodeid 
       LEFT JOIN
         dead_nodes AS t1
       ON
@@ -45,10 +45,12 @@ router.get('/status', async (req, res) => {
       ON
         query_nodeid.node_id = t2.node_id
       WHERE
-        t2.timestamp >= NOW() - INTERVAL 24 HOUR;`;
+        t2.timestamp >= NOW() - INTERVAL '24 HOUR';`
+
+    const query1 = "SELECT * FROM dead_nodes";
 
     // Execute the query to retrieve the status
-    const result = await db.query(query, [nodeid]);
+    const result = await db.query(query);
     res.status(200).json(result.rows[0]);
   } catch (error) {
     console.error('Error retrieving status:', error);
