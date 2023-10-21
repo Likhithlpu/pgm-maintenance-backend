@@ -5,7 +5,7 @@ const db = require('./db');
 
 // Define a route to store complaints in the database
 router.post('/complaints', async (req, res) => {
-  const { name, contactNumber, complaint } = req.body;
+  const { name, email, contactNumber, Vertical, nodeId, complaint } = req.body;
 
   if (!name || !contactNumber || !complaint) {
     return res.status(400).json({ error: 'Name, Contact Number, and Complaint are required.' });
@@ -14,8 +14,8 @@ router.post('/complaints', async (req, res) => {
   try {
     // Insert the complaint into the database
     const result = await db.query(
-      'INSERT INTO complaints (name, contact_number, complaint_text) VALUES ($1, $2, $3) RETURNING *',
-      [name, contactNumber, complaint]
+      'INSERT INTO complaints (name, email, contactNumber, Vertical, nodeId, complaint) VALUES ($1, $2, $3, $4, $5, $6) RETURNING *',
+      [name, email, contactNumber, Vertical, nodeId, complaint ]
     );
     res.status(201).json(result.rows[0]);
   } catch (error) {
