@@ -45,7 +45,7 @@ router.get('/status', async (req, res) => {
       ON
         query_nodeid.node_id = t2.node_id
       WHERE
-        t2.timestamp >= NOW() - INTERVAL '24 HOUR';`
+        t2.timestamp >= NOW() - INTERVAL '3 HOUR';`
 
     const query1 = "SELECT * FROM dead_nodes";
 
