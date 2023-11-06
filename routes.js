@@ -30,23 +30,12 @@ router.get('/status', async (req, res) => {
 
   try {
     // Replace this query with your actual query to retrieve the status based on the provided nodeid
-    const query = `SELECT
-        COALESCE(t1.node_id, '${nodeid}') AS nodeid,
-        COALESCE(t1.status, 'Active') AS status,
-        t2.timestamp
-      FROM
-        (SELECT '${nodeid}' AS node_id) AS query_nodeid 
-      LEFT JOIN
-        dead_nodes AS t1
-      ON
-        query_nodeid.node_id = t1.node_id
-      LEFT JOIN
-        dead_nodes AS t2
-      ON
-        query_nodeid.node_id = t2.node_id
-      WHERE
-        t2.timestamp >= NOW() - INTERVAL '3 HOUR';`
-
+   const query = `
+          SELECT timestamp, node_id AS nodeid, status 
+          FROM dead_nodes 
+          WHERE timestamp >= NOW() - INTERVAL '3 HOUR'
+          AND node_id='${nodeid}'`;
+    
     const query1 = "SELECT * FROM dead_nodes";
 
     // Execute the query to retrieve the status
