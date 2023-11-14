@@ -24,6 +24,26 @@ router.post('/complaints', async (req, res) => {
   }
 });
 
+router.post('/feedback', async (req, res) => {
+  const { name, email, contactNumber, Vertical, nodeId, complaint } = req.body;
+
+  if (!name || !contactNumber || !complaint) {
+    return res.status(400).json({ error: 'Name, Contact Number, and Complaint are required.' });
+  }
+
+  try {
+    // Insert the complaint into the database
+    const result = await db.query(
+      'INSERT INTO feedback (name, email, contactNumber, Vertical, nodeId, complaint) VALUES ($1, $2, $3, $4, $5, $6) RETURNING *',
+      [name, email, contactNumber, Vertical, nodeId, complaint ]
+    );
+    res.status(201).json(result.rows[0]);
+  } catch (error) {
+    console.error('Error inserting complaint:', error);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+});
+
 // Define a route to retrieve the status from the database
 router.get('/status', async (req, res) => {
   const { nodeid } = req.query;
