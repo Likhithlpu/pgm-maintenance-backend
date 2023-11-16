@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const db = require('./db');
+const db = require('./db-old');
 
 
 // Define a route to store complaints in the database
@@ -23,6 +23,7 @@ router.post('/complaints', async (req, res) => {
     res.status(500).json({ error: 'Internal Server Error' });
   }
 });
+
 
 router.post('/feedback', async (req, res) => {
   const { name, email, contactNumber, feedback } = req.body;
@@ -63,6 +64,38 @@ router.get('/status', async (req, res) => {
     res.status(200).json(result.rows[0]);
   } catch (error) {
     console.error('Error retrieving status:', error);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+});
+
+router.get('/complaints/active', async (req, res) => {
+  try {
+    const result = await db.query('SELECT * FROM public.complaints WHERE status=$1', ['Active']);
+    res.json(result.rows);
+  } catch (error) {
+    console.error('Error fetching active complaints:', error);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+});
+
+// Endpoint to close a complaint by ID
+router.put('/complaints/:id/close', async (req, res) => {
+  const { id } = req.params;
+
+  try {
+    // Update the status to 'Closed' and set the updated time
+    const result = await db.query(
+      'UPDATE public.complaints SET status=$1, updated_time=NOW() WHERE sno=$2 RETURNING *',
+      ['Closed', id]
+    );
+
+    if (result.rows.length === 0) {
+      res.status(404).json({ error: 'Complaint not found' });
+    } else {
+      res.json({ message: 'Complaint closed successfully' });
+    }
+  } catch (error) {
+    console.error('Error closing complaint:', error);
     res.status(500).json({ error: 'Internal Server Error' });
   }
 });
