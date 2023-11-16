@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const db = require('./db-old');
+const db = require('./db');
 
 
 // Define a route to store complaints in the database
