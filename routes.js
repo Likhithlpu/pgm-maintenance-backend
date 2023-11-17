@@ -78,6 +78,7 @@ router.get('/complaints/active', async (req, res) => {
   }
 });
 
+
 // Endpoint to close a complaint by ID
 router.put('/complaints/:id/close', async (req, res) => {
   const { id } = req.params;
@@ -100,4 +101,13 @@ router.put('/complaints/:id/close', async (req, res) => {
   }
 });
 
+router.get('/feedback', async (req, res) => {
+  try {
+    const result = await db.query('SELECT * FROM public.feedback');
+    res.json(result.rows);
+  } catch (error) {
+    console.error('Error fetching active feedback:', error);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+});
 module.exports = router;
