@@ -28,19 +28,19 @@ router.post('/complaints', async (req, res) => {
 router.post('/feedback', async (req, res) => {
   const { name, email, contactNumber, feedback } = req.body;
 
-  if (!name || !contactNumber || !feedback) {
-    return res.status(400).json({ error: 'Name, Contact Number, and Complaint are required.' });
-  }
+  // if (!name || !contactNumber || !feedback) {
+  //   return res.status(400).json({ error: 'Name, Contact Number, and Feedback are required.' });
+  // }
 
   try {
     // Insert the complaint into the database
     const result = await db.query(
       'INSERT INTO feedback (name, email, contactNumber, feedback) VALUES ($1, $2, $3, $4) RETURNING *',
-      [name, email, contactNumber, Vertical, nodeId, feedback ]
+      [name, email, contactNumber, feedback ]
     );
     res.status(201).json(result.rows[0]);
   } catch (error) {
-    console.error('Error inserting complaint:', error);
+    console.error('Error inserting feedback:', error);
     res.status(500).json({ error: 'Internal Server Error' });
   }
 });
