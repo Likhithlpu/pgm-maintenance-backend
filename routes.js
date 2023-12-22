@@ -1,4 +1,5 @@
 const express = require('express');
+const nodemailer = require('nodemailer');
 const router = express.Router();
 const db = require('./db');
 
@@ -110,4 +111,37 @@ router.get('/feedback', async (req, res) => {
     res.status(500).json({ error: 'Internal Server Error' });
   }
 });
+
+router.post('/send-email', (req, res) => {
+  const { to, subject, body } = req.body;
+
+  // Replace these values with your Gmail credentials
+  const transporter = nodemailer.createTransport({
+    service: 'gmail',
+    auth: {
+      user: 'scrclab@gmail.com',
+      pass: 'igyupqkbzljkbech',
+    },
+  });
+
+  const mailOptions = {
+    from: 'scrclab@gmail.com',
+    to,
+    subject,
+    text:body,
+  };
+
+  transporter.sendMail(mailOptions, (error, info) => {
+    if (error) {
+        console.error('Error sending email:', error);
+        return res.status(500).send(error.toString());
+        }
+    
+        console.log('Email sent successfully:', info);
+        res.status(200).send('Email sent: ' + info.response);
+  });
+});
+
+
+
 module.exports = router;
