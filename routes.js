@@ -107,7 +107,6 @@ router.put('/complaints/:id/close', async (req, res) => {
 // Endpoint to close a complaint by ID
 router.put('/complaints/:id/assign', async (req, res) => {
   const { id } = req.params;
-  const { issue, solution } = req.body; // Extract issue and solution from the request body
 
   try {
     // Update the status to 'Closed', set the updated time, and store issue and solution
@@ -119,7 +118,7 @@ router.put('/complaints/:id/assign', async (req, res) => {
     if (result.rows.length === 0) {
       res.status(404).json({ error: 'Complaint not found' });
     } else {
-      res.json({ message: 'Complaint Asiigned successfully' });
+      res.json({ message: 'Complaint Assigned successfully' });
     }
   } catch (error) {
     console.error('Error Assigning complaint:', error);
