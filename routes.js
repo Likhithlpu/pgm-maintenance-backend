@@ -114,8 +114,23 @@ router.get('/feedback', async (req, res) => {
   }
 });
 
-router.post('/send-email', (req, res) => {
-  const { to, subject, body } = req.body;
+router.post('/send-email', async (req, res) => {
+  try {
+    // Update the status to 'Closed', set the updated time, and store issue and solution
+    const result = await db.query(
+      'UPDATE public.complaints SET status=$1 WHERE sno=$4 RETURNING *',
+      ['Assigned']
+    );
+
+    if (result.rows.length === 0) {
+      res.status(404).json({ error: 'Complaint not found' });
+    } else {
+      res.json({ message: 'Complaint Assigned successfully. Sending Mail' });
+    }
+  } catch (error) {
+    console.error('Error closing complaint:', error);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
 
   // Replace these values with your Gmail credentials
   const transporter = nodemailer.createTransport({
@@ -142,6 +157,8 @@ router.post('/send-email', (req, res) => {
         console.log('Email sent successfully:', info);
         res.status(200).send('Email sent: ' + info.response);
   });
+
+  
 });
 
 
