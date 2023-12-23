@@ -104,18 +104,11 @@ router.put('/complaints/:id/close', async (req, res) => {
 });
 
 
-router.get('/feedback', async (req, res) => {
-  try {
-    const result = await db.query('SELECT * FROM public.feedback');
-    res.json(result.rows);
-  } catch (error) {
-    console.error('Error fetching active feedback:', error);
-    res.status(500).json({ error: 'Internal Server Error' });
-  }
-});
-
-router.post('/:id/send-email', async (req, res) => {
+// Endpoint to close a complaint by ID
+router.put('/complaints/:id/assign', async (req, res) => {
   const { id } = req.params;
+  const { issue, solution } = req.body; // Extract issue and solution from the request body
+
   try {
     // Update the status to 'Closed', set the updated time, and store issue and solution
     const result = await db.query(
@@ -126,13 +119,26 @@ router.post('/:id/send-email', async (req, res) => {
     if (result.rows.length === 0) {
       res.status(404).json({ error: 'Complaint not found' });
     } else {
-      res.json({ message: 'Complaint Assigned successfully. Sending Mail' });
+      res.json({ message: 'Complaint Asiigned successfully' });
     }
   } catch (error) {
-    console.error('Error closing complaint:', error);
+    console.error('Error Assigning complaint:', error);
     res.status(500).json({ error: 'Internal Server Error' });
   }
+});
 
+router.get('/feedback', async (req, res) => {
+  try {
+    const result = await db.query('SELECT * FROM public.feedback');
+    res.json(result.rows);
+  } catch (error) {
+    console.error('Error fetching active feedback:', error);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+});
+
+router.post('/send-email', async (req, res) => {
+  const { id } = req.params;
   // Replace these values with your Gmail credentials
   const transporter = nodemailer.createTransport({
     service: 'gmail',
