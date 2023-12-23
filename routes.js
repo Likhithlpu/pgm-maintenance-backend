@@ -138,7 +138,7 @@ router.get('/feedback', async (req, res) => {
 });
 
 router.post('/send-email', async (req, res) => {
-  const { id } = req.params;
+  const { to, subject, body } = req.body;
   // Replace these values with your Gmail credentials
   const transporter = nodemailer.createTransport({
     service: 'gmail',
