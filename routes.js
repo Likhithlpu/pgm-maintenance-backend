@@ -83,12 +83,13 @@ router.get('/complaints/active', async (req, res) => {
 // Endpoint to close a complaint by ID
 router.put('/complaints/:id/close', async (req, res) => {
   const { id } = req.params;
+  const { issue, solution } = req.body; // Extract issue and solution from the request body
 
   try {
-    // Update the status to 'Closed' and set the updated time
+    // Update the status to 'Closed', set the updated time, and store issue and solution
     const result = await db.query(
-      'UPDATE public.complaints SET status=$1, updated_time=NOW() WHERE sno=$2 RETURNING *',
-      ['Closed', id]
+      'UPDATE public.complaints SET status=$1, updated_time=NOW(), issue=$2, solution=$3 WHERE sno=$4 RETURNING *',
+      ['Closed', issue, solution, id]
     );
 
     if (result.rows.length === 0) {
@@ -101,6 +102,7 @@ router.put('/complaints/:id/close', async (req, res) => {
     res.status(500).json({ error: 'Internal Server Error' });
   }
 });
+
 
 router.get('/feedback', async (req, res) => {
   try {
