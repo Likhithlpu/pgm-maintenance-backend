@@ -115,11 +115,12 @@ router.get('/feedback', async (req, res) => {
 });
 
 router.post('/send-email', async (req, res) => {
+  const { id } = req.params;
   try {
     // Update the status to 'Closed', set the updated time, and store issue and solution
     const result = await db.query(
-      'UPDATE public.complaints SET status=$1 WHERE sno=$4 RETURNING *',
-      ['Assigned']
+      'UPDATE public.complaints SET status=$1 WHERE sno=$2 RETURNING *',
+      ['Assigned',id]
     );
 
     if (result.rows.length === 0) {
