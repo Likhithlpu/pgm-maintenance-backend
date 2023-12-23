@@ -114,7 +114,7 @@ router.get('/feedback', async (req, res) => {
   }
 });
 
-router.post('/send-email', async (req, res) => {
+router.post('/:id/send-email', async (req, res) => {
   const { id } = req.params;
   try {
     // Update the status to 'Closed', set the updated time, and store issue and solution
