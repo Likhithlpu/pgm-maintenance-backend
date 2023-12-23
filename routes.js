@@ -71,7 +71,7 @@ router.get('/status', async (req, res) => {
 
 router.get('/complaints/active', async (req, res) => {
   try {
-    const result = await db.query('SELECT * FROM public.complaints WHERE status=$1', ['Active']);
+    const result = await db.query('SELECT * FROM public.complaints WHERE status=$1 OR status=$2', ['Active','Assigned']);
     res.json(result.rows);
   } catch (error) {
     console.error('Error fetching active complaints:', error);
