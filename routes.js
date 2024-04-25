@@ -143,7 +143,7 @@ router.post('/send-email', async (req, res) => {
     service: 'gmail',
     auth: {
       user: 'scrclab@gmail.com',
-      pass: 'igyupqkbzljkbech',
+      pass: '$$$$$$$$$$$$$$',
     },
   });
 
